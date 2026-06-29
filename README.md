@@ -1,7 +1,7 @@
 # Aurask - Agentic App Builder
 
 📋 *Table of Contents*
-- [Overview](#overview)
+- [Overview](#overview) 
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Getting Started](#getting-started)
