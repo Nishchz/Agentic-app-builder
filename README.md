@@ -1,4 +1,4 @@
-# Aurask - Autonomous App Builder
+# Aurask - Agentic App Builder
 
 📋 *Table of Contents*
 - [Overview](#overview)
