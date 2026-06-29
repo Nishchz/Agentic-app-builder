@@ -1,56 +1,99 @@
-<div align="center">
+# Aurask - Autonomous App Builder
 
-# 🤖 Aurask | Autonomous Engineering Engine
+📋 *Table of Contents*
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Getting Started](#getting-started)
 
-*"Transforming abstract human intent into production-grade software architectures."*
 
-[![Next.js](https://img.shields.io/badge/Framework-Next.js_14-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://opensource.org/licenses/MIT)
+## Overview
+A full-stack, AI-powered React app generator where users describe what they want to build, and the AI writes production-ready React code that renders live in the browser — just like Bolt.new or Lovable.
 
----
+Users get a live Sandpack preview, a persistent chat history, image upload support, and a credit-based subscription system. Pro users can trigger a Cline AI agent that autonomously improves the generated app file by file.
 
-### 🌐 System Executive Summary
-*Aurask* is a state-of-the-art agentic software engine designed to abstract the complexities of full-stack development. By leveraging large-scale language models, it autonomously constructs relational database schemas, implements business logic, and orchestrates live deployment sandboxes. Aurask is built to empower developers by handling the boilerplate overhead, allowing focus on high-level system design.
+## Tech Stack
+| Layer | Technology |
+| :--- | :--- |
+| *Framework* | Next.js 15 (App Router, TypeScript) |
+| *Auth + Billing* | Clerk |
+| *Database* | Supabase (via Prisma) |
+| *Image Storage* | Supabase Storage |
+| *Rate Limiting* | Arcjet |
+| *AI Model* | Gemini 3.5 Flash |
+| *AI Agent (Improve)* | Cline SDK (@cline/sdk) |
+| *Code Editor + Preview* | Sandpack (@codesandbox/sandpack-react) |
+| *Styling* | Tailwind CSS v4 + Shadcn UI |
+| *ORM* | Prisma (Postgres adapter) |
 
----
+## Features
+### Landing Page
+- Prompt textarea with rotating placeholders and suggestion chips
+- Live browser mockup preview
+- Features section, how-it-works steps, pricing table (Clerk <PricingTable/>)
+- Dark theme throughout
 
-</div>
+### Auth (Clerk)
+- Google OAuth sign-in
+- User auto-created in Supabase on first login with free credits
+- Plan detection via Clerk has() — credits top-up on plan upgrade
+- Pricing modal accessible from the header credit badge
 
-## 🛠️ Technical Architecture
+### Workspace
+- Split-panel layout: Chat (left) + Code/Preview (right)
+- Full persistent chat history stored in Supabase
+- AI responses rendered with react-markdown and a live blinking cursor during streaming
+- Image upload via paperclip → Supabase Storage → CDN URL injected into prompt
+- Auto-scroll, hidden scrollbar, user avatars
 
-| Component | Technology | Role |
-| :--- | :--- | :--- |
-| *Orchestration* | Next.js 14 (App Router) | High-performance API routing and server-side logic. |
-| *Data Layer* | Prisma ORM | Type-safe database interactions and schema modeling. |
-| *Persistence* | PostgreSQL | Robust, ACID-compliant relational storage. |
-| *Identity* | Clerk | Secure, enterprise-grade authentication and session management. |
-| *Styling* | Tailwind CSS | Utility-first, responsive design architecture. |
+### AI Code Generation (/api/gen-ai-code)
+- Gemini 3.5 Flash with thinkingConfig enabled
+- Streams Gemini thought labels as live status steps in the chat panel
+- Returns strict JSON: { assistantMessage, title, files, dependencies }
+- npm registry validation — hallucinated packages silently filtered
+- Atomic DB transaction: workspace upsert + credit deduction in one operation
 
----
+### Improve with AI — Cline SDK (/api/improve) — Pro + Starter
+- Cline Agent with two tools: update_file + done_improving
+- Agent streams reasoning live into the chat panel as it works
+- Files patched one at a time via SSE — Sandpack updates without remounting
+- lifecycle: { completesRun: true } ends the agent cleanly after all files are done
+- Gated to Starter and Pro plans
 
-## 🚀 Engineering Capabilities
+### Fix with AI
+- Sandpack listens for runtime + compile errors
+- Error banner appears in Preview tab with "Fix with AI" button
+- Injects the error + context into Gemini and triggers a new generation
 
-*   *Generative Schema Modeling*: Automates the creation of complex PostgreSQL schemas based on user-defined business requirements.
-*   *Agentic Logic Pipeline*: Interprets natural language inputs to build modular backend service layers.
-*   *Intelligent Subscription Engine*: Integrated tiering system (Starter/Pro) with trial-logic handled via robust database synchronization.
-*   *Sandbox Orchestration*: Dynamically generates and manages isolated user environments for real-time application testing.
+### Code Panel (Sandpack)
+- Preview and Code tabs — auto-switches to Preview after each generation
+- Built-in CodeMirror editor (read-only), file explorer
+- Tailwind v3 loaded via CDN inside the preview iframe
+- Smart re-keying: SandpackProvider only remounts when file paths change, not contents
+- Export to ZIP — downloads a ready-to-run CRA project with package.json
 
----
+### Projects Page
+- Grid of all past workspaces with title, first prompt preview, message count, timestamp
+- Delete project with confirmation modal
+- Empty state with CTA
 
-## ⚙️ Deployment & Environment Configuration
+### Token / Credit System
+- Free: 10 credits · Starter: 50 · Pro: 150
+- Cost: 1 credit per generation or improve
+- Checked client-side and server-side (402 response as backup)
+- Credits top up additively on plan upgrade, preserved on downgrade
 
-To initialize the Aurask engine in your local development environment:
+## Getting Started
+### Prerequisites
+- Node.js 22+
+- A Supabase project
+- A Clerk application
+- A Google AI Studio API key (Gemini)
 
+
+### Installation
 ```bash
-# Clone the repository
 git clone [https://github.com/Nishchz/Agentic-app-builder.git](https://github.com/Nishchz/Agentic-app-builder.git)
 cd Agentic-app-builder
-
-# Install dependencies
 npm install
 
-# Initialize schema
-npx prisma generate
-npx prisma db push
