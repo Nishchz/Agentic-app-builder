@@ -1,4 +1,3 @@
-
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "./prisma";
 import { PLANS } from "./constants";
@@ -22,22 +21,21 @@ export const checkUser = async () => {
       where: { clerkId: user.id },
     });
 
-    if (existing) {
+  
+        if (existing) {
+      // User exists, check if the plan has changed 
       if (existing.plan !== currentPlan) {
-        const oldPlan = existing.plan as Plan;
         const newPlan = currentPlan as Plan;
-
-        const existingPlanCredits = PLANS[oldPlan]?.credits ?? 0;
         const newPlanCredits = PLANS[newPlan].credits;
-        const creditDelta = newPlanCredits - existingPlanCredits;
+
+        // Update the user's plan and credits
+        const totalCredits = (existing.credits ?? 0) + newPlanCredits;
 
         await db.user.update({
           where: { clerkId: user.id },
           data: {
             plan: newPlan,
-            credits: creditDelta > 0
-              ? existing.credits + creditDelta
-              : existing.credits,
+            credits: totalCredits,
           },
         });
 
