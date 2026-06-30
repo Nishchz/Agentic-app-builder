@@ -11,7 +11,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
     const { userId } = await auth();
     
-    // Agar userId nahi hai, toh login page par redirect karein
+    // If the user is not authenticated, redirect them to the sign-in page
     if (!userId) {
       const signInUrl = new URL("/sign-in", req.url);
       return NextResponse.redirect(signInUrl);
