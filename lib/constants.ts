@@ -34,10 +34,10 @@ export const PRICING_PLANS = [
   {
     key: "starter",
     label: "Starter",
-    description: "For developers who build regularly.",
+    description: "For developers who build regularly. Start with a 21-day free trial.",
     price: 9,
     featured: true,
-    planId: "cplan_3FofemlSxutOaGUFaEGSnGuHSzy",
+    planId: "cplan_3FofemlSxutOaGUFaEGSnGuHSzy", // Make sure this matches your Clerk Plan ID
     active: false,
     features: [
       "50 generations / month",
@@ -49,10 +49,10 @@ export const PRICING_PLANS = [
   {
     key: "pro",
     label: "Pro",
-    description: "For power users who ship fast.",
+    description: "For power users who ship fast. Start with a 14-day free trial.",
     price: 29,
     featured: false,
-    planId: "cplan_3FogdTHQ7mZk9vyJBsUeDS3vW7q",
+    planId: "cplan_3FogdTHQ7mZk9vyJBsUeDS3vW7q", // Make sure this matches your Clerk Plan ID
     active: false,
     features: [
       "150 generations / month",
@@ -64,3 +64,5 @@ export const PRICING_PLANS = [
     ],
   },
 ] as const;
+
+export type Plan = keyof typeof PLANS;
